@@ -10,6 +10,8 @@
     "outDir": "./dist/",
     "baseUrl": "./src/",
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
     "sourceMap": true,
     "paths": {}
   },
