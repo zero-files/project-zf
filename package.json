@@ -2,14 +2,14 @@
   "name": "project-l",
   "version": "1.0.0",
   "description": "Tal vez sea algo",
-  "main": "./dist/main.js",
+  "main": "./dist/Main.js",
   "author": "Zero Files",
   "license": "MIT",
   "scripts": {
     "build": "tsc && tsc-alias",
     "start": "node .",
     "start:local": "npm run build && cross-env NODE_ENV=local node .",
-    "dev": "cross-env NODE_ENV=local nodemon --watch './src' --exec 'ts-node' -r tsconfig-paths/register ./src/main.ts",
+    "dev": "cross-env NODE_ENV=local nodemon --watch './src' --exec 'ts-node' -r tsconfig-paths/register ./src/Main.ts",
     "test": "jest --config jest.config.ts"
   },
   "homepage": "https://github.com/zero-files/project-l#readme",
