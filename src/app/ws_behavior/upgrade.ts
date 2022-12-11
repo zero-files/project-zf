@@ -1,5 +1,11 @@
 import { HttpResponse, HttpRequest, us_socket_context_t as usSocketContextT } from "uWebSockets.js";
 
+/**
+ * Actualiza una conexión HTTP a websockets
+ * @param res Una HTTPResponse
+ * @param req Una HTTPRequest
+ * @param context Representación cruda del uSocket
+ */
 export default function upgrade(res:HttpResponse, req:HttpRequest, context:usSocketContextT):void {
   let aborted = false;
   res.onAborted(() => aborted = true);
