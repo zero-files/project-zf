@@ -1,7 +1,7 @@
 
 import * as UWS from "uWebSockets.js";
 import Space from "./components/Space";
-import ApplicationOptions from "./ApplicationOptions";
+import ApplicationOptions from "./components/types/ApplicationOptions";
 
 /**
  * Representa toda la aplicación

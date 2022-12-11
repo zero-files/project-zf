@@ -1,12 +1,15 @@
 import { DISABLED as COMPRESSION_DISABLED, WebSocket, HttpRequest, HttpResponse, us_socket_context_t as usSocketContextT, WebSocketBehavior, RecognizedString } from "uWebSockets.js";
 import Connection from "./connections/Connection";
 import Connections from "./connections/Connections";
+import ConnectionHeadersBuilder, { ConnectionHeaders } from "./connections/ConnectionHeaders";
+import JWT from "../../utils/JWT";
 
 /**
  * Un espacio es una ruta de conexión websocket con un comportamiento específico
  * @author Lottie <enzodiazdev@gmail.com>
  */
 export default class Space implements WebSocketBehavior {
+  private jwt = JWT.getInstance();
   /** Lista de conexiones activas */
   private connections = new Connections();
   /** Endpoint de la conexión socket */
@@ -30,11 +33,17 @@ export default class Space implements WebSocketBehavior {
     const secWebSocketKey = req.getHeader("sec-websocket-key");
     const secWebSocketProtocol = req.getHeader("sec-websocket-protocol");
     const secWebSocketExtensions = req.getHeader("sec-websocket-extensions");
+    const authorization = req.getHeader("authorization");
+
+    const headers = new ConnectionHeadersBuilder()
+      .setUrl(url)
+      .setAuthorization(authorization)
+      .build();
 
     setTimeout(() => {
       if(aborted) return;
-      else res.upgrade(
-        { url: url },
+      else res.upgrade<ConnectionHeaders>(
+        { ...headers },
         secWebSocketKey,
         secWebSocketProtocol,
         secWebSocketExtensions,
@@ -43,9 +52,15 @@ export default class Space implements WebSocketBehavior {
     }, 50);
   };
 
-  public open = (websocket:WebSocket):void => {
+  public open = (websocket:WebSocket & Partial<ConnectionHeaders>):void => {
     const connection = new Connection(websocket);
     this.connections.add(connection);
+    connection.reply({ event: "connecting" });
+
+    if(websocket.authorization) {
+      const token = this.jwt.verify(websocket.authorization);
+      if(!token) websocket.authorization = undefined;
+    }
 
     connection.reply({ event: "connected" });
   };
