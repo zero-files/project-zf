@@ -25,7 +25,7 @@ export default class JWT {
 
   /** Firma el código y retorna un JWT */
   public sign(payload:string|object|Buffer):string {
-    return jwt.sign(payload, this.secret);
+    return jwt.sign(payload, this.secret, { expiresIn: "47h" });
   }
 
   /** Verifica el token y retorna el payload decodificado */
