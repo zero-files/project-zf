@@ -1,6 +1,5 @@
 import { WebSocket } from "uWebSockets.js";
 import connections from "./connections_manager";
-import connection from "./connections_manager/connection";
 
 /**
  * Cierra una conexión websocket
