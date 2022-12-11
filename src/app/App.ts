@@ -3,6 +3,7 @@ import * as UWS from "uWebSockets.js";
 import Space from "./components/Space";
 import ApplicationOptions from "./ApplicationOptions";
 
+/** Representa toda la aplicación */
 export default class Application {
   private instance:UWS.TemplatedApp;
 
@@ -11,10 +12,12 @@ export default class Application {
     else this.instance = UWS.App();
   }
 
+  /** Añade una nueva instanciad e aplicación */
   public addSpace(space:Space):void {
     this.instance.ws(space.path, space);
   }
 
+  /** Inicia la aplicación en el puerto indicado con un comportamiento opcional */
   public listen(port:number, callback?:(token:UWS.us_listen_socket) => void):void {
     this.instance.listen(port, token => {
       if(callback) return callback(token);
