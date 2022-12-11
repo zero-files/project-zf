@@ -17,7 +17,8 @@ export default function upgrade(res:HttpResponse, req:HttpRequest, context:usSoc
   const secWebSocketExtensions = req.getHeader("sec-websocket-extensions");
 
   setTimeout(() => {
-    res.upgrade(
+    if(aborted) return;
+    else res.upgrade(
       { url: url },
       secWebSocketKey,
       secWebSocketProtocol,
