@@ -1,13 +1,15 @@
 //MIT license.
 /**
  * @file Considering that using PRNG is not secure,
- * this function provides a cryptographically secure random integer (CSPRNG).
+ * this class provides a cryptographically secure random tools (CSPRNG).
  * @see https://gist.github.com/EnzoDiazDev/a77cbdd73694cc32a03913ddfc562d0c
+ * @author Lottie <enzodiazdev@gmail.com>
  */
 import { randomBytes } from "crypto";
 
 /**
  * Herramienta para manejo aleatorio de primitivos
+ * @author Lottie <enzodiazdev@gmail.com>
  */
 export default class Random {
   /**

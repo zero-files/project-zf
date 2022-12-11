@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 
 /**
  * Singleton clase de utilidad para el manejo de JWT
+ * @author Lottie <enzodiazdev@gmail.com>
  */
 export default class JWT {
   private static instance:JWT;
@@ -28,14 +29,14 @@ export default class JWT {
   }
 
   /** Verifica el token y retorna el payload decodificado */
-  public verify(token:string):string|object {
+  public verify(token:string):object | null {
     const parsedToken = token.replace("Bearer ", "");
 
     return jwt.verify(parsedToken, this.secret, (error, decoded) => {
       if(error) {
-        if(error.name === "TokenExpiredError") return "expired";
-        else return "invalid";
+        if(error.name === "TokenExpiredError") return null;
+        else return null;
       } return decoded;
-    }) as unknown as string|object;
+    }) as unknown as object;
   }
 }

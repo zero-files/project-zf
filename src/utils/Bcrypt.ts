@@ -1,7 +1,10 @@
 import bcrypt from "bcryptjs";
 import Random from "./Random";
 
-/** Wrapper class para bcryptjs basado en promesas */
+/**
+ * Wrapper class para bcryptjs basado en promesas
+ * @author Lottie <enzodiazdev@gmail.com>
+ */
 export default class Bcrypt {
   private static randomizeRounds():number {
     return Random.uint8(10, 30);
