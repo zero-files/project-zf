@@ -18,8 +18,8 @@ export default class Application {
   public listen(port:number, callback?:(token:UWS.us_listen_socket) => void):void {
     this.instance.listen(port, token => {
       if(callback) return callback(token);
-      if(token) console.log(`Mateine WS is listening on port ${port}`);
-      else console.log(`Mateine WS was failed trying to listen port ${port}`);
+      if(token) console.log(`WS listening on port ${port}`);
+      else console.log(`WS was failed trying to listen port ${port}`);
     });
   }
 }
