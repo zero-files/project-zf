@@ -3,7 +3,10 @@ import * as UWS from "uWebSockets.js";
 import Space from "./components/Space";
 import ApplicationOptions from "./ApplicationOptions";
 
-/** Representa toda la aplicación */
+/**
+ * Representa toda la aplicación
+ * @author Lottie <enzodiazdev@gmail.com>
+ */
 export default class Application {
   private instance:UWS.TemplatedApp;
 
