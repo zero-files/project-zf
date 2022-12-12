@@ -42,7 +42,7 @@ export default class Connection {
    */
   public emit<Event extends keyof ConnectionEvents>(event:Event, ...data:KeysOfKeyOrAnys<ConnectionEvents, Event>):void {
 
-    this.reply({ event, data: data[0] });
+    this.reply({ event, data: data[0] || null });
   }
 
   /**
