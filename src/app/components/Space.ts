@@ -56,14 +56,14 @@ export default class Space implements WebSocketBehavior {
   public open = (websocket:WebSocket & Partial<ConnectionHeaders>):void => {
     const connection = new Connection(websocket);
     this.connections.add(connection);
-    connection.reply({ event: "connecting" });
+    connection.emit("connecting");
 
     if(websocket.authorization) {
       const token = this.jwt.verify(websocket.authorization);
       if(!token) websocket.authorization = undefined;
     }
 
-    connection.reply({ event: "connected" });
+    connection.emit("connected");
   };
 
   public message = (websocket:WebSocket, message:ArrayBuffer, _isBinary:boolean):void => {
