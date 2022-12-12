@@ -3,6 +3,7 @@ import Connection from "./connections/Connection";
 import Connections from "./connections/Connections";
 import ConnectionHeadersBuilder, { ConnectionHeaders } from "./connections/ConnectionHeaders";
 import JWT from "../../utils/JWT";
+import { isMessage } from "./messages/Message";
 
 /**
  * Un espacio es una ruta de conexión websocket con un comportamiento específico
@@ -15,7 +16,7 @@ export default class Space implements WebSocketBehavior {
   /** Endpoint de la conexión socket */
   public path:RecognizedString;
   public maxPayloadLength = 16 * 1024;
-  public idleTimeout = 120;
+  public idleTimeout = 60 * 10;
   public compression = COMPRESSION_DISABLED;
   public maxBackpressure = 1024 * 1024;
   public sendPingsAutomatically = false;
@@ -65,11 +66,20 @@ export default class Space implements WebSocketBehavior {
     connection.reply({ event: "connected" });
   };
 
-  public message = (websocket:WebSocket, _message:ArrayBuffer, _isBinary:boolean):void => {
+  public message = (websocket:WebSocket, message:ArrayBuffer, _isBinary:boolean):void => {
     const connection = this.connections.get(websocket);
     if(!connection) return websocket.close();
 
-    connection.reply({ event: "pong" });
+    try {
+      const payload = JSON.parse(Buffer.from(message).toString());
+
+      const isValidMessage = isMessage(payload);
+      if(!isValidMessage) return connection.emit("error", { error: "invalid_message", detail: "El mensaje no es válido" });
+
+      connection.reply({ event: "pong" });
+    } catch(error) {
+      connection.emit("error", { error: "unexpected_error", detail: (error as Error).message });
+    }
   };
 
   public drain = (websocket:WebSocket):void => {
@@ -78,7 +88,7 @@ export default class Space implements WebSocketBehavior {
       if(!connection) return websocket.close();
 
       connection.overpressured = false;
-      connection.sendPendingMessages();
+      connection.sendPendingResponses();
     }
   };
 
