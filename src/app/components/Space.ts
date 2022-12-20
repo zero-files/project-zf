@@ -4,6 +4,7 @@ import Connections from "./connections/Connections";
 import ConnectionHeadersBuilder, { ConnectionHeaders } from "./connections/ConnectionHeaders";
 import JWT from "../../utils/JWT";
 import Message from "./messages/Message";
+import MessageHandler from "./MessageHandler";
 
 /**
  * Un espacio es una ruta de conexión websocket con un comportamiento específico
@@ -15,6 +16,10 @@ export default class Space implements WebSocketBehavior {
   private connections = new Connections();
   /** Endpoint de la conexión socket */
   public path:RecognizedString;
+  /** Custom handler para mensajes de websockets */
+  public onRawMessage:((websocket:WebSocket, message:ArrayBuffer, _isBinary:boolean) => Promise<void>) | null = null;
+  /** Message handler */
+  public messageHandler:MessageHandler | null;
   public maxPayloadLength = 16 * 1024;
   public idleTimeout = 60 * 10;
   public compression = COMPRESSION_DISABLED;
@@ -66,9 +71,11 @@ export default class Space implements WebSocketBehavior {
     connection.emit("connected");
   };
 
-  public message = (websocket:WebSocket, message:ArrayBuffer, _isBinary:boolean):void => {
+  public message = async (websocket:WebSocket, message:ArrayBuffer, isBinary:boolean):Promise<void> => {
     const connection = this.connections.get(websocket);
     if(!connection) return websocket.close();
+
+    if(this.onRawMessage) return this.onRawMessage(websocket, message, isBinary);
 
     try {
       const payload = JSON.parse(Buffer.from(message).toString());
@@ -76,7 +83,7 @@ export default class Space implements WebSocketBehavior {
       const isValidMessage = Message.isMessage(payload);
       if(!isValidMessage) return connection.emit("error", { error: "invalid_message", detail: "El mensaje no es válido" });
 
-      connection.send({ event: "pong" });
+      if(this.messageHandler) return this.messageHandler.handle(connection, payload);
     } catch(error) {
       connection.emit("error", { error: "unexpected_error", detail: (error as Error).message });
     }
