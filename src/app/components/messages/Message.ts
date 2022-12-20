@@ -1,9 +1,9 @@
 /** Representa un mensaje enviado por el cliente */
 export default class Message {
   /** Momento del mensaje */
-  timestamp:number;
+  public timestamp:number;
   /** Contenido del mensaje */
-  content:string;
+  public content:string;
 
   /**
    * Comprueba si un objeto es un mensaje
