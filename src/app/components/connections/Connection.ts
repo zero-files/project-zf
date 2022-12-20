@@ -36,13 +36,13 @@ export default class Connection {
   /**
    * Simula la emisión de un evento.
    *
-   * Alias para `Connection.reply({ event, data });`
+   * Alias para `Connection.send({ event, data });`
    * @param event Nombre del evento
    * @param data Datos del evento
    */
   public emit<Event extends keyof ConnectionEvents>(event:Event, ...data:KeysOfKeyOrAnys<ConnectionEvents, Event>):void {
 
-    this.reply({ event, data: data[0] || null });
+    this.send({ event, data: data[0] || null });
   }
 
   /**
@@ -50,7 +50,7 @@ export default class Connection {
    * en caso contrario lo agrega a la cola de respuestas pendientes
    * @param response Respuesta a enviar
    */
-  public reply(response:Response):void {
+  public send(response:Response):void {
     if (this.closed) return;
     if (this.overpressured) {
       this.pendingResponses.push(response);
@@ -72,7 +72,7 @@ export default class Connection {
     while (this.pendingResponses.length > 0) {
       const message = this.pendingResponses.shift();
       if(this.overpressured) break;
-      this.reply(message);
+      this.send(message);
     }
   }
 

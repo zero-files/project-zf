@@ -76,7 +76,7 @@ export default class Space implements WebSocketBehavior {
       const isValidMessage = Message.isMessage(payload);
       if(!isValidMessage) return connection.emit("error", { error: "invalid_message", detail: "El mensaje no es válido" });
 
-      connection.reply({ event: "pong" });
+      connection.send({ event: "pong" });
     } catch(error) {
       connection.emit("error", { error: "unexpected_error", detail: (error as Error).message });
     }
