@@ -33,6 +33,16 @@ export default class Connection {
     this.socket = websocket;
   }
 
+  /** Setea un token de autorización */
+  public set authorization(authorization:string|null) {
+    this.socket.authorization = authorization;
+  }
+
+  /** Obtiene el token de autorización */
+  public get authorization():string | null {
+    return this.socket.authorization || null;
+  }
+
   /**
    * Simula la emisión de un evento.
    *
