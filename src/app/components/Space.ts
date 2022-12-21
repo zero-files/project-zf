@@ -5,6 +5,8 @@ import ConnectionHeadersBuilder, { ConnectionHeaders } from "./connections/Conne
 import JWT from "../../utils/JWT";
 import Message from "./messages/Message";
 import MessageHandler from "./MessageHandler";
+import ErrorResponse from "./responses/ErrorResponse";
+import Response from "./responses/Response";
 
 /**
  * Un espacio es una ruta de conexión websocket con un comportamiento específico
@@ -61,14 +63,17 @@ export default class Space implements WebSocketBehavior {
   public open = (websocket:WebSocket & Partial<ConnectionHeaders>):void => {
     const connection = new Connection(websocket);
     this.connections.add(connection);
-    connection.emit("connecting");
+
+    const connectingResponse = new Response().setEvent("connecting");
+    connection.emit(connectingResponse);
 
     if(websocket.authorization) {
       const token = this.jwt.verify(websocket.authorization);
       if(!token) websocket.authorization = undefined;
     }
 
-    connection.emit("connected");
+    const connectedResponse = new Response().setEvent("connected");
+    connection.emit(connectedResponse);
   };
 
   public message = async (websocket:WebSocket, message:ArrayBuffer, isBinary:boolean):Promise<void> => {
@@ -81,11 +86,21 @@ export default class Space implements WebSocketBehavior {
       const payload = JSON.parse(Buffer.from(message).toString());
 
       const isValidMessage = Message.isMessage(payload);
-      if(!isValidMessage) return connection.emit("error", { error: "invalid_message", detail: "El mensaje no es válido" });
+      if(!isValidMessage) {
+        const invalidMessageResponse = new ErrorResponse()
+          .setError("invalid_message")
+          .setDetail("El mensaje no es válido");
+
+        return connection.emit(invalidMessageResponse);
+      }
 
       if(this.messageHandler) return this.messageHandler.handle(connection, payload);
     } catch(error) {
-      connection.emit("error", { error: "unexpected_error", detail: (error as Error).message });
+      const unexpectedErrorResponse = new ErrorResponse()
+        .setError("unexpected_error")
+        .setDetail((error as Error).message);
+
+      connection.emit(unexpectedErrorResponse);
     }
   };
 

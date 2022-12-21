@@ -1,9 +1,6 @@
 import { WebSocket } from "uWebSockets.js";
 import { v4 as uuid } from "uuid";
-import ConnectionEvents from "./ConnectionEvents";
 import Response from "../responses/Response";
-
-type KeysOfKeyOrAnys<T, Tkey extends keyof T> = T[Tkey] extends [...unknown[]] ? T[Tkey] : any[];
 
 /**
  * Representa una conexión websocket
@@ -43,16 +40,10 @@ export default class Connection {
     return this.socket.authorization || null;
   }
 
-  /**
-   * Simula la emisión de un evento.
-   *
-   * Alias para `Connection.send({ event, data });`
-   * @param event Nombre del evento
-   * @param data Datos del evento
-   */
-  public emit<Event extends keyof ConnectionEvents>(event:Event, ...data:KeysOfKeyOrAnys<ConnectionEvents, Event>):void {
-
-    this.send({ event, data: data[0] || null });
+  /** Simula la emisión de un evento. */
+  public emit(response:Response):void {
+    if(!response.getEvent()) throw new Error("No se puede emitir un evento anónimo");
+    this.send(response);
   }
 
   /**
@@ -67,9 +58,8 @@ export default class Connection {
       return;
     }
 
-    response.timestamp = Date.now();
-    const stringifiedResponse = JSON.stringify(response);
-    const buffer = this.socket.send(stringifiedResponse);
+    response.setTimestamp(`${Date.now()}`);
+    const buffer = this.socket.send(response.toString());
 
     if (buffer === 0 || buffer === 2) this.overpressured = true;
   }
