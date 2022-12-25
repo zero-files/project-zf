@@ -1,5 +1,5 @@
 {
-  "name": "project-l",
+  "name": "project-zf",
   "version": "1.0.0",
   "description": "Tal vez sea algo",
   "main": "./dist/Main.js",
@@ -12,13 +12,13 @@
     "dev": "cross-env NODE_ENV=local nodemon --watch './src' --exec 'ts-node' -r tsconfig-paths/register ./src/Main.ts",
     "test": "jest --config jest.config.ts"
   },
-  "homepage": "https://github.com/zero-files/project-l#readme",
+  "homepage": "https://github.com/zero-files/project-zf#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zero-files/project-l.git"
+    "url": "git+https://github.com/zero-files/project-zf.git"
   },
   "bugs": {
-    "url": "https://github.com/zero-files/project-l/issues"
+    "url": "https://github.com/zero-files/project-zf/issues"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
