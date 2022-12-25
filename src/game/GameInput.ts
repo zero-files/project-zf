@@ -17,6 +17,11 @@ export default class GameInput implements MessageHandler {
     return this;
   }
 
+  public addCommands(commands:Command[]):this {
+    commands.forEach(command => this.addCommand(command));
+    return this;
+  }
+
   public removeCommand(command:Command):void {
     this.commands.delete(command.trigger);
   }
