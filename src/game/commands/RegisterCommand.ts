@@ -5,7 +5,7 @@ import Command from "./Command";
 export default class RegisterCommand extends Command {
   public trigger = "register";
 
-  public execute(connection:Connection, message:Message):Promise<string> {
+  protected handle(connection:Connection, message:Message):Promise<string> {
     throw new Error("Method not implemented.");
   }
 

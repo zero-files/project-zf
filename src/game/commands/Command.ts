@@ -6,12 +6,17 @@ export default abstract class Command {
   protected preconditions = new Set<Precondition>();
   public abstract trigger:string;
 
-  // protected async validate(connection:Connection, message:Message):Promise<true> {
-  //   const preconditions = Array.from(this.preconditions)
-  //     .map(precondition => precondition.validate(connection, message));
-  //
-  //   return await Promise.all(preconditions).then(() => true);
-  // }
+  private async validate(connection:Connection, message:Message):Promise<true> {
+    const preconditions = Array.from(this.preconditions)
+      .map(precondition => precondition.validate(connection, message));
 
-  public abstract execute(connection:Connection, message:Message):Promise<string>;
+    return await Promise.all(preconditions).then(() => true);
+  }
+
+  protected abstract handle(connection:Connection, message:Message):Promise<string>;
+
+  public async execute(connection:Connection, message:Message):Promise<string> {
+    await this.validate(connection, message);
+    return this.handle(connection, message);
+  }
 }
